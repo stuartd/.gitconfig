@@ -7,15 +7,25 @@ if ! command -v git >/dev/null 2>&1; then
 	exit 1
 fi
 
-if [ "$(uname -s)" != "Darwin" ]; then
-	echo "This installer is for macOS. Use scripts/install.ps1 on Windows." >&2
-	exit 1
-fi
+case "$(uname -s)" in
+	Darwin)
+		platform="macos"
+		platform_name="macOS"
+		;;
+	Linux)
+		platform="linux"
+		platform_name="Linux"
+		;;
+	*)
+		echo "Unsupported platform. Use scripts/install.ps1 on Windows." >&2
+		exit 1
+		;;
+esac
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 repo_root=$(CDPATH= cd -- "${script_dir}/.." && pwd)
 common_config="${repo_root}/common/gitconfig"
-platform_config="${repo_root}/macos/gitconfig"
+platform_config="${repo_root}/${platform}/gitconfig"
 local_config="${repo_root}/local/gitconfig"
 local_example="${repo_root}/local/gitconfig.example"
 global_ignore_source="${repo_root}/common/gitignore"
@@ -46,5 +56,5 @@ else
 	echo "Kept existing ${global_ignore_target}; merge common/gitignore manually if wanted."
 fi
 
-echo "Installed common, macOS, and local Git configuration."
+echo "Installed common, ${platform_name}, and local Git configuration."
 echo "Verify with: git config --global --includes --show-origin --list"

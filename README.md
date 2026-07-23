@@ -5,6 +5,7 @@ machine-specific settings:
 
 ```text
 common/   Shared Git configuration and global ignore rules
+linux/    Linux overrides
 macos/    macOS overrides
 windows/  Windows overrides
 local/    Ignored settings for one machine
@@ -36,6 +37,19 @@ The installer:
 If an existing `~/.gitignore` is retained, either merge the rules from
 `common/gitignore` yourself or change `core.excludesFile` in
 `local/gitconfig`.
+
+## Install on Linux
+
+Clone the repository to a stable location, then run:
+
+```sh
+./scripts/install.sh
+```
+
+The shell installer detects Linux and includes the common, Linux, and local
+configuration files. Linux uses Git's in-memory credential cache as a safe,
+distribution-neutral default. A desktop keyring, Git Credential Manager, or
+GitHub CLI can replace it in `local/gitconfig`.
 
 ## Install on Windows
 
@@ -70,10 +84,11 @@ git check-ignore -v local/gitconfig
 ## Credentials
 
 Do not put passwords, access tokens, private keys, or credential-bearing
-remote URLs in any Git configuration file. The platform files use the native
-credential store:
+remote URLs in any Git configuration file. The platform files select
+platform-appropriate credential helpers:
 
 - macOS uses Keychain through `osxkeychain`;
+- Linux uses Git's in-memory credential cache through `cache`;
 - Windows uses Git Credential Manager through `manager`.
 
 Authentication tools may be configured in the ignored `local/gitconfig`.
