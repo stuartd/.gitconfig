@@ -1,0 +1,13 @@
+# Operating-system metadata
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+Desktop.ini
+
+# Editor backup and swap files
+*~
+*.swp
+*.swo
+*.tmp

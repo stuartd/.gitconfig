@@ -1,0 +1,6 @@
+[core]
+	autocrlf = true
+
+[credential]
+	helper =
+	helper = manager

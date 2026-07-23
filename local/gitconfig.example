@@ -1,0 +1,28 @@
+# This file is safe to copy to local/gitconfig, which is ignored by Git.
+# Uncomment only the settings needed on this machine.
+
+# [user]
+# 	email = name@company.example
+#
+# [user]
+# 	signingKey = KEY_ID_FROM_YOUR_LOCAL_KEYRING
+#
+# [commit]
+# 	gpgSign = true
+#
+# Reset the platform helper and delegate GitHub authentication to GitHub CLI.
+# This stores no token in the file; `gh auth login` owns the credential.
+#
+# [credential "https://github.com"]
+# 	helper =
+# 	helper = !gh auth git-credential
+#
+# [credential "https://gist.github.com"]
+# 	helper =
+# 	helper = !gh auth git-credential
+#
+# Apply a different identity to repositories below a local directory.
+# The path can point at another ignored config file.
+#
+# [includeIf "gitdir:~/code/work/"]
+# 	path = work.gitconfig

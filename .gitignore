@@ -1,0 +1,24 @@
+# Machine-specific configuration
+/local/*
+!/local/README.md
+!/local/gitconfig.example
+
+# Environment and credential files
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.kdbx
+credentials.json
+secrets.json
+auth.json
+
+# Local editor and operating-system state
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
