@@ -60,7 +60,6 @@
 	required = true
 
 [alias]
-	again = !git add -A && git commit --amend --no-edit && git push --force-with-lease
 	list = log --oneline --abbrev-commit --all --graph --decorate -10
 
 [sequence]
