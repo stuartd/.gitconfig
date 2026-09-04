@@ -61,6 +61,4 @@
 
 [alias]
 	list = log --oneline --abbrev-commit --all --graph --decorate -10
-
-[sequence]
-	editor = nano
+    hidden = "!git ls-files -v | grep '^S'"
