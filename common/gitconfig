@@ -42,7 +42,6 @@
 
 [core]
 	excludesFile = ~/.gitignore
-	editor = nano
 	pager = less -FRX
 
 [rebase]
