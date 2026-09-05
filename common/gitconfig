@@ -52,12 +52,6 @@
 [pull]
 	rebase = true
 
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-
 [alias]
 	list = log --oneline --abbrev-commit --all --graph --decorate -10
     hidden = "!git ls-files -v | grep '^S'"

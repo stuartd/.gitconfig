@@ -1,125 +1,120 @@
-# Cross-platform Git configuration
+# Git configuration reference
 
-This repository keeps shared Git preferences separate from platform and
-machine-specific settings:
+This repository is a reference for setting up Git the way I like it.
+It contains configuration to review and copy manually, plus a read-only
+comparison script. There is no installer, and Git should not include files
+directly from this checkout.
 
-```text
-common/   Shared Git configuration and global ignore rules
-linux/    Linux overrides
-macos/    macOS overrides
-windows/  Windows overrides
-local/    Ignored settings for one machine
-scripts/  Installation helpers
-```
-
-The shared configuration reflects the Git preferences in use when this
-repository was created. Later includes win, so the effective order is:
+If an earlier installer added includes for this checkout, they remain active
+until you remove them yourself. Preserve any settings you want in your own
+Git config before removing those includes.
 
 ```text
-existing global config -> common -> platform -> local
+common/gitconfig         Shared preferences
+common/gitignore         Suggested global ignore rules
+macos/gitconfig          macOS preferences
+linux/gitconfig          Linux preferences
+windows/gitconfig        Windows preferences
+local/gitconfig.example  Examples of machine-specific settings
+scripts/check-config.py  Compare the references with global Git settings
 ```
 
-## Install on macOS
+## Comparing a machine
 
-Clone the repository to a stable location, then run:
+The checker requires Git and Python 3.9 or newer, with no extra Python packages.
+On macOS or Linux, run:
 
 ```sh
-./scripts/install.sh
+python3 scripts/check-config.py
 ```
 
-The installer:
-
-- creates `local/gitconfig` from the example when it does not exist;
-- adds the common, macOS, and local files to the global Git include list;
-- links `~/.gitignore` to `common/gitignore` when that path is unused; and
-- leaves any existing `~/.gitconfig` settings and global ignore file intact.
-
-If an existing `~/.gitignore` is retained, either merge the rules from
-`common/gitignore` yourself or change `core.excludesFile` in
-`local/gitconfig`.
-
-## Install on Linux
-
-Clone the repository to a stable location, then run:
-
-```sh
-./scripts/install.sh
-```
-
-The shell installer detects Linux and includes the common, Linux, and local
-configuration files. Linux uses Git's in-memory credential cache as a safe,
-distribution-neutral default. A desktop keyring, Git Credential Manager, or
-GitHub CLI can replace it in `local/gitconfig`.
-
-## Install on Windows
-
-Run PowerShell from the repository:
+On Windows, run:
 
 ```powershell
-Set-ExecutionPolicy -Scope Process Bypass
-.\scripts\install.ps1
+py -3 scripts/check-config.py
 ```
 
-The PowerShell installer performs the equivalent setup for the common,
-Windows, and local configuration. When `~/.gitignore` does not exist, it
-copies the tracked global ignore file there.
+It detects the current platform and compares `common/gitconfig` plus that
+platform's file against the machine's **global** Git configuration. To select
+the reference platform explicitly, add `--platform macos`, `--platform linux`,
+or `--platform windows`.
 
-## Machine-local settings
+The report lists missing settings (for example, `git alias example not found`),
+settings with different values, and local settings absent from the selected
+references. Local-only settings can be intentional, such as a Gist credential
+helper with a machine-specific path. All preference keys are compared by default.
 
-Edit `local/gitconfig` for settings that should not follow you to another
-computer, such as:
+The checker follows global config includes, but excludes values loaded from
+this checkout's common and platform reference files so they do not count as
+independently configured local values. It lists any such sources separately.
+Other included files, including an existing `local/gitconfig`, remain part of
+the local comparison. Include directives themselves are not preferences.
 
-- a work email selected with `includeIf`;
-- a signing-key identifier;
-- an editor installed at a machine-specific path; or
-- a credential helper supplied by GitHub CLI or another local tool.
+For scalar preferences it compares the last value; for credential helper keys
+it compares the ordered list after empty resets. Boolean spellings such as
+`true` and `yes` are treated as equivalent for the reference Boolean settings.
+Other values are compared as text. It does not execute aliases or helpers,
+simulate authentication for a remote, or check whether an editor is installed.
+Repository-local and system config are outside the comparison.
 
-`local/gitconfig` and every other unapproved file under `local/` are ignored.
-Confirm this before adding private settings:
+The script only reports differences. It never changes files, and differences
+do not cause a failing exit status; errors reading the configuration do.
+
+## Setting up a machine
+
+Review `common/gitconfig` and the file for the current operating system, then
+edit the machine's global configuration:
 
 ```sh
-git check-ignore -v local/gitconfig
+git config --global --edit
 ```
 
-## Credentials
+Copy the settings you want into that file. If a setting already exists with a
+different value, choose which value to keep and edit the existing entry.
+Keep machine-specific settings there too, including editor paths, identities,
+signing keys, and GitHub CLI credential helpers.
 
-Do not put passwords, access tokens, private keys, or credential-bearing
-remote URLs in any Git configuration file. The platform files select
-platform-appropriate credential helpers:
+The platform files use:
 
-- macOS uses Keychain through `osxkeychain`;
-- Linux uses Git's in-memory credential cache through `cache`;
-- Windows uses Git Credential Manager through `manager`.
+- macOS: `nano`, LF input normalization, and the Keychain credential helper;
+- Linux: `nano`, LF input normalization, and the in-memory credential cache;
+- Windows: CRLF working files and Git Credential Manager, leaving editor
+  selection to the machine's existing configuration.
 
-Authentication tools may be configured in the ignored `local/gitconfig`.
-The example shows the shape of a GitHub CLI override without containing a
-credential. Private key files, environment files, and common credential file
-names are also ignored at the repository root.
+Check that the editor and credential helper you choose are installed.
+The full set of shared preferences requires Git 2.44 or newer.
 
-Before committing, review both tracked and ignored state:
+Credential helpers are ordered: an empty `helper` resets earlier helpers.
+Put machine-specific GitHub/Gist helper blocks after the general platform
+helper block so their overrides remain effective. `local/gitconfig.example`
+contains examples to copy, including a GitHub CLI helper.
 
-```sh
-git status --short
-git status --short --ignored
-git diff --cached
-```
+For global ignore rules, review `core.excludesFile` before copying it. Merge
+the patterns from `common/gitignore` into your existing global ignore file,
+or copy them to a file outside this checkout and set `core.excludesFile` to
+that location.
 
-## Verify the active configuration
+## Checking the result
 
-Show each setting together with the file that supplied it:
+Show the global settings and their source files:
 
 ```sh
 git config --global --includes --show-origin --list
 ```
 
-Useful spot checks:
+Settings copied into the global config should have that file as their source,
+rather than a path inside this repository. Once any old repo includes have
+been removed, updating or moving this checkout does not change your installed
+preferences; apply future changes manually.
+
+Keep passwords, access tokens, and private keys out of these reference files.
+Machine-specific paths and helper commands belong in the machine's own config.
+
+## Checking the comparison script
 
 ```sh
-git config --global --get user.email
-git config --global --get core.autocrlf
-git config --global --get-all credential.helper
+python3 -B -m unittest discover -s tests -v
 ```
 
-Keep the checkout in a stable location. If it is moved, remove the old
-`include.path` entries from `~/.gitconfig`, then re-run the relevant
-installer.
+The checks create and clean up fixtures inside this repository and do not
+modify the machine's Git configuration.

@@ -1,7 +1,9 @@
-# Local configuration
+# Machine-specific examples
 
-`gitconfig.example` is tracked; `gitconfig` is not.
+`gitconfig.example` contains optional settings to copy into the machine's
+global Git config. It is a reference file, not an active configuration layer.
 
-Copy the example to `gitconfig` (the installers do this automatically) and
-put host-specific settings there. Keep actual credentials in the operating
-system credential store, never in this directory.
+An existing `local/gitconfig` remains ignored and is left untouched. If an
+older setup includes it, it remains active until you remove that include.
+For new setups, keep machine-specific settings in the global config outside
+this checkout, and actual credentials in the operating system credential store.

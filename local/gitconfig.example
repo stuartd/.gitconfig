@@ -1,5 +1,5 @@
-# This file is safe to copy to local/gitconfig, which is ignored by Git.
-# Uncomment only the settings needed on this machine.
+# Copy selected settings into the machine's global Git config (~/.gitconfig).
+# Uncomment only the settings needed on that machine.
 
 # [user]
 # 	email = name@company.example
@@ -22,7 +22,7 @@
 # 	helper = !gh auth git-credential
 #
 # Apply a different identity to repositories below a local directory.
-# The path can point at another ignored config file.
+# Keep the referenced config outside this checkout too.
 #
 # [includeIf "gitdir:~/code/work/"]
-# 	path = work.gitconfig
+# 	path = ~/.config/git/work.gitconfig
