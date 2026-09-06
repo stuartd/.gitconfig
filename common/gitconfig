@@ -54,4 +54,5 @@
 
 [alias]
 	list = log --oneline --abbrev-commit --all --graph --decorate -10
+	lg = log --all -10 --graph --date=relative --pretty=format:\"%C(auto)%h %ad | %s%d [%an]%C(reset)\"
     hidden = "!git ls-files -v | grep '^S'"
