@@ -186,7 +186,9 @@ def check(repo: Path, platform: str) -> None:
         print("  None.")
 
     print(f"\nOnly local; absent from this platform's references ({len(local_only)}):")
-    for key in local_only:
+    for index, key in enumerate(local_only):
+        if index:
+            print()
         print(f"  {key}")
         print(f"    local: {describe(local[key], all_values=True)}")
         print_sources(local[key])
